@@ -1,0 +1,17 @@
+.header {
+    display: flex;
+    /*justify-content: space-around;*/
+    background-color: #87d6d4;
+    color: black;
+    height: 25%;
+    align-items: center;
+}
+
+.image_div {
+    height: 80%;
+    width: 100%;
+}
+
+.clue_image {
+    height: 100%;
+}
