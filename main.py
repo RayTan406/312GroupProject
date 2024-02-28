@@ -7,7 +7,8 @@ def root():
 
 @app.after_request
 def nosniff(response):
-    if(request.path == "/static/clue.JPG" or request.path == "/static/style.css"):
+    paths200OK = ["/static/clue.JPG", "/static/style.css"]
+    if(request.path in paths200OK):
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.status_code = 200
         return response
@@ -15,5 +16,6 @@ def nosniff(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.status_code = 200
     return response
+
 if __name__ == "__main__":
     app.run(debug=True,host='0.0.0.0',port=8080)
