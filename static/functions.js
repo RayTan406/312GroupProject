@@ -1,9 +1,4 @@
-function backgroundChangeToRed() {
-    document.body.style.backgroundColor = "red";
+window.onload=function(){
+    document.getElementById("background_buttonred").addEventListener('click', function() {document.body.style.backgroundColor = "red";});
+    document.getElementById("background_buttonblue").addEventListener('click', function(){document.body.style.backgroundColor = "#87d6d4";});
 }
-function backgroundChangeToBlue() {
-    document.body.style.backgroundColor = "#87d6d4";
-}
-
-document.getElementById("background_buttonred").addEventListener('click', backgroundChangeToRed(), false);
-document.getElementById("background_buttonblue").addEventListener('click', backgroundChangeToBlue(), false);
