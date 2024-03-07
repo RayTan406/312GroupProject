@@ -1,9 +1,42 @@
 from flask import Flask, request, render_template, make_response
+import pymongo
+import bcrypt
+from dbHelper import add, find, findOne, update
+import datetime
+
+mongoIP = 'INSERT HERE'
+client = pymongo.MongoClient(mongoIP)
+db = client["312"]
+
 app = Flask(__name__)
  
 @app.route("/")
 def root():
     return render_template("index.html")
+
+@app.route("/register")
+def register():
+    pass
+
+@app.route("/login")
+def login():
+    if request.method == "POST":
+        username = request.form.get('username')
+        password = request.form.get('password')
+        col = db["Accounts"]
+        d = {"username": username}
+        filter = {"_id": 0, "username": 1, "password": 1, "salt": 1}
+        details = findOne(col,d,filter)
+        hashedPassword = bcrypt.hashpw(password.encode("utf-8"), details["salt"])
+        if details["password"] == hashedPassword:
+            response = Flask.make_response()
+            authToken = bcrypt.gensalt()
+            response.set_cookie("auth", authToken, max_age=3600, httponly=True)
+            response.status_code = 200
+            update(col, d, { "$set": {"authToken": authToken, "expire": datetime.datetime.now() + datetime.timedelta(minutes=60)}})
+            return response
+        else:
+            Flask.abort(404, "Login info wrong!")
 
 @app.after_request
 def nosniff(response):
@@ -16,6 +49,10 @@ def nosniff(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.status_code = 200
     return response
+
+@app.errorhandler(404)
+def page_not_found(error):
+    Flask.abort(404, "This page is not found.")
 
 if __name__ == "__main__":
     app.run(debug=True,host='0.0.0.0',port=8080)
