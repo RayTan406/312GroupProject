@@ -21,6 +21,44 @@
 <button type="button" id="background_buttonred">Change background to red</button>
 <button type="button" id="background_buttonblue">Change background to blue</button>
 
+<div class="forms">
+        <div class="register_form">
+        <form action="/register" method="post" enctype="application/x-www-form-urlencoded">
+                <div>
+                       <label>Username</label>
+                       <input name="username" type="text" required> 
+                </div>
+                <div>
+                       <label>Password</label>
+                       <input name="password" type ="password" required> 
+                </div>
+                <div>
+                        <button type="submit">Register</button>
+                </div>
+                
+                
+        </form>
+</div>
+
+<div class="login_form">
+        <form action="/login" method="post" enctype="application/x-www-form-urlencoded">
+                <div>
+                       <label>Username</label>
+                       <input name="username" type="text" required> 
+                </div>
+                <div>
+                       <label>Password</label>
+                       <input name="password" type ="password" required> 
+                </div>
+                <div>
+                        <button type="submit">Log-in</button>
+                </div>
+                
+                
+        </form>
+</div>
+</div>
+
 
 </body>
 </html>

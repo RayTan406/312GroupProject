@@ -19,3 +19,13 @@ body {
 .clue_image {
     height: 100%;
 }
+
+.forms {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+}
+    
+.login_form{
+    position: relative;
+}
