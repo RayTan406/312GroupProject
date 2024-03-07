@@ -33,7 +33,7 @@ def login():
             authToken = bcrypt.gensalt()
             response.set_cookie("auth", authToken, max_age=3600, httponly=True)
             response.status_code = 200
-            update(col, d, { "$set": {"authToken": authToken, "expire": datetime.datetime.now() + datetime.timedelta(minutes=60)}})
+            update(col, d, { "$set": {"authToken": bcrypt.hashpw(authToken), "expire": datetime.datetime.now() + datetime.timedelta(minutes=60)}})
             return response
         else:
             Flask.abort(404, "Login info wrong!")
