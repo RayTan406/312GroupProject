@@ -4,6 +4,7 @@
 <title>Page Title</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}"/>
+<script src="{{url_for('static', filename='functions.js')}}"></script>
 <style>
 </style>
 <script src=""></script>
@@ -16,6 +17,10 @@
 <div class="image_div">
         <img src="{{url_for('static', filename='clue.JPG')}}" alt="picture machine broke :( " class="clue_image">
 </div>
+
+<button type="button" id="background_buttonred">Change background to red</button>
+<button type="button" id="background_buttonblue">Change background to blue</button>
+
 
 </body>
 </html>
