@@ -34,6 +34,9 @@ def login():
             response.set_cookie("auth", authToken, max_age=3600, httponly=True)
             response.status_code = 200
             update(col, d, { "$set": {"authToken": bcrypt.hashpw(authToken), "expire": datetime.datetime.now() + datetime.timedelta(minutes=60)}})
+
+            # notes for future changes: add html replacement of <div class="forms"> to <div class="forms" hidden> and
+            # <div class="logged_in_stuff" hidden> to <div class="logged_in_stuff">. Also change {{user_name_here}} to username
             return response
         else:
             Flask.abort(404, "Login info wrong!")
