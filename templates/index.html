@@ -59,6 +59,21 @@
 </div>
 </div>
 
+<div class="logged_in_stuff" hidden>
+        <div class="show_name">
+            <p id="paragraph">
+                Welcome, {{user_name_here}}
+            </p>
+        </div>
+    
+        <div class = "logout-btn">
+            <br/>
+            <form action="/logout" method="post">
+                <input type="submit" name="logout" value="Log Out" />
+            </form>
+        </div>
+    </div>
+
 
 </body>
 </html>

@@ -24,8 +24,41 @@ body {
     position: fixed;
     top: 10px;
     right: 10px;
+    justify-content: center;
+    align-items: center;
 }
     
+.register_form form div {
+    margin-bottom: 2px;
+}
+
+.register_form form label {
+    display: inline-block;
+    text-align: center;
+}
+
+.register_form form input[name="password"] {
+    margin-left: 3px;
+}
+
+.login_form form div {
+    margin-bottom: 2px;
+}
+
+.login_form form label {
+    display: inline-block;
+}
+
+.login_form form input[name="password"] {
+    margin-left: 3px;
+}
+
 .login_form{
     position: relative;
+}
+
+.logged_in_stuff {
+    position: fixed;
+    top: 10px;
+    right: 10px;
 }
