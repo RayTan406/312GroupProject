@@ -2,3 +2,16 @@ window.onload=function(){
     document.getElementById("background_buttonred").addEventListener('click', function() {document.body.style.backgroundColor = "red";});
     document.getElementById("background_buttonblue").addEventListener('click', function(){document.body.style.backgroundColor = "#87d6d4";});
 }
+
+function toggleForms() {
+    var forms = document.getElementById("forms");
+    var logout = document.getElementById("logged-in");
+    if (forms.style.display === "none"){
+        forms.style.display = "block";
+        logout.style.display = "none";
+    }
+    else{
+        forms.style.display = "none";
+        logout.style.display = "block";
+    }
+}
