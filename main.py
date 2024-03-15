@@ -1,10 +1,11 @@
-from flask import Flask, request, render_template, make_response, redirect, url_for
+from flask import Flask, request, render_template, make_response, redirect, url_for, flash
 import pymongo
 from dbHelper import add, find, findOne, update
 from datetime import datetime, timedelta
 import html
 import hashlib
 import os
+import bcrypt
 
 client = pymongo.MongoClient("mongo")
 db = client["CLUELESS"]
@@ -28,19 +29,18 @@ def validate_password(password):
 
 app = Flask(__name__)
  
-@app.route("/", methods=["GET"])
+@app.route("/")
 def root():
     loggedin = False
     user_name_here = ""
-    if request.method == "GET":
-        TokensCol = db["Tokens"]
-        auth_token = request.cookies.get('authToken')
-        if auth_token:
-            auth = hashlib.sha256(auth_token.encode()).hexdigest()  # Encode the token before hashing
-            token = TokensCol.find_one({"authToken": auth})
-            if token and token["expire"] > datetime.now():
-                user_name_here = token["username"]
-                loggedin = True
+    auth_token = request.cookies.get("authToken")
+    TokensCol = db["Tokens"]
+    if auth_token:
+        auth = hashlib.sha256(auth_token.encode()).hexdigest()
+        token = TokensCol.find_one({"authToken": auth})
+        if token and token["expire"] > datetime.now():
+            user_name_here = token["username"]
+            loggedin = True
     return render_template("index.html", user_name_here=user_name_here, loggedin=loggedin)
 
 @app.route("/register", methods=["POST"])
@@ -48,28 +48,28 @@ def register():
     if request.method == "POST":
         username = html.escape(request.form.get('username'))
         password = request.form.get('password')
-        repeatPassword = request.form.get("repeat password")
+        repeatPassword = request.form.get("confirmpassword")
         AccountCol = db["Accounts"]
         account = AccountCol.find_one({"username": username})
         if account:
-            return redirect(url_for(root, registerError = "Username taken"))
+            flash("Username taken", "error")
         else:
             if repeatPassword == password:
-                if(validate_password(password)):
-                    salt = os.urandom(16)
-                    salted_password = password.encode() + salt
-                    hashed_password = hashlib.sha256(salted_password).hexdigest()
+                if validate_password(password):
+                    salt = bcrypt.gensalt()
+                    hashed_password = bcrypt.hashpw(password.encode(), salt)
                     user_info = {
                         "username": username,
                         "password": hashed_password,
                         "salt": salt
                     }
                     AccountCol.insert_one(user_info)
-                    return redirect(url_for("/", registerError = "Account created"))
+                    flash("Account created", "success")
                 else:
-                    return redirect(url_for("/", registerError = "Password needs: 1 uppercase, 1 lowercase, 1 special character, and one number"))
+                    flash("Password needs: 1 uppercase, 1 lowercase, 1 special character, and one number", "error")
             else:
-                return redirect(url_for("/", registerError = "Passwords don't match"))
+                flash("Passwords don't match", "error")
+    return redirect(url_for("root"))
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -80,24 +80,27 @@ def login():
         TokensCol = db["Tokens"]
         account = AccountCol.find_one({"username": username})
         if account:
-            salt = account["salt"]
-            salted_password = password.encode() + salt
-            hashed_password = hashlib.sha256(salted_password).hexdigest()
-            if hashed_password == account["password"]:
-                auth = os.urandom(16)
-                authHashed = hashlib.sha256(auth).hexdigest()
-                token = TokensCol.find_one({"username": username})
-                if token:
-                    expire = datetime.now() + timedelta(minutes = 60)
-                    TokensCol.update_one({"username": username}, {"$set":{"authToken": authHashed, "expire": expire}})
-                else:
-                    expire = datetime.now() + timedelta(minutes = 60)
-                    TokensCol.insert_one({"username":username, "authToken": authHashed, "expire": expire})
-                response = make_response(url_for("/"))
-                response.set_cookie('authToken', auth, expires=datetime.now() + timedelta(minutes=60), httponly=True, samesite='Strict')
+            hashed_password = account["password"]
+            if bcrypt.checkpw(password.encode(), hashed_password):
+                auth_token = bcrypt.gensalt().decode()
+                hashed = hashlib.sha256(auth_token.encode()).hexdigest()
+                expire = datetime.now() + timedelta(minutes=60)
+                TokensCol.update_one({"username": username}, {"$set": {"authToken": hashed, "expire": expire}}, upsert=True)
+                response = make_response(redirect(url_for("root")))
+                response.set_cookie('authToken', auth_token, expires=expire, httponly=True, samesite='Strict')
                 return response
+            else:
+                flash("Invalid credentials", "error")
         else:
-            return redirect(url_for("/", error = "Invalid Login"))
+            flash("Invalid credentials", "error")
+
+    return redirect(url_for("root"))
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    response = make_response(redirect(url_for("root")))
+    response.delete_cookie("authToken")
+    return response
 
 
 @app.after_request
@@ -117,4 +120,7 @@ def page_not_found(error):
     return "This page is not found.", 404
 
 if __name__ == "__main__":
+    secret_key = os.urandom(24)
+    secret_key = str(secret_key)
+    app.secret_key = secret_key
     app.run(debug=True,host='0.0.0.0',port=8080)

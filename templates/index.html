@@ -23,7 +23,7 @@
 <button type="button" id="background_buttonblue">Change background to blue</button>
 
 {% if loggedin %}
-<div id="logged-in" class="logged_in_stuff" hidden>
+<div id="logged-in" class="logged_in_stuff">
     <div class="show_name">
         <p id="paragraph">
             Welcome, {{ user_name_here }}
@@ -33,16 +33,22 @@
     <div class="logout-btn">
         <br>
         <form action="/logout" method="post">
-            <input type="submit" onclick="toggleForms()" name="logout" value="Log Out">
+            <input type="submit" name="logout" value="Log Out">
         </form>
     </div>
 </div>
 {% else %}
 <div id="forms" class="forms">
     <div class="register_form">
-        <p id="paragraph">
-                {{ registerError }}
-        </p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
         <form action="/register" method="post">
             <div>
                 <label>Username</label>
@@ -63,9 +69,15 @@
     </div>
 
     <div class="login_form">
-        <p id="paragraph">
-            {{ error }}
-        </p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
         <form action="/login" method="post">
             <div>
                 <label>Username</label>
