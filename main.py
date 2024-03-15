@@ -102,6 +102,45 @@ def logout():
     response.delete_cookie("authToken")
     return response
 
+@app.route("/chatroom", methods=["GET"])
+def chatroom():
+    return render_template("chatroom.html")
+
+@app.route("/chatroom-message", methods=["POST"])
+def chatroom_post():
+    AccountCol = db["Accounts"]
+    TokensCol = db["Tokens"]
+    MessagesCol = db["Messages"]
+    IDCol = db["UID"]
+
+    # Get unique ID from database and increment it by 1
+    get_id = IDCol.find_one({"unique_id": {"$exists": True}})
+    if get_id is None:
+        IDCol.insert_one({"unique_id": 1})
+    get_id = IDCol.find_one({"unique_id": {"$exists": True}})
+    uid = get_id["unique_id"]
+    uid += 1
+    IDCol.update_one({"_id": get_id["_id"]}, {"$set": {"unique_id": uid}})
+
+    #check if user authenticated
+    found_user = ""
+    auth_token = request.cookies.get("authToken")
+    if auth_token:
+        auth = hashlib.sha256(auth_token.encode()).hexdigest()
+        token = TokensCol.find_one({"authToken": auth})
+        if token and token["expire"] > datetime.now():
+            found_user = token["username"]
+
+    message_json = json.loads(request.body)
+    sent_message = html.escape(message_json["message"])
+    
+
+
+            
+
+
+
+
 
 @app.after_request
 def nosniff(response):

@@ -15,3 +15,13 @@ function toggleForms() {
         logout.style.display = "block";
     }
 }
+
+function sendChat(){
+    const chatTextBox = document.getElementById("chat-form");
+    const message = chatTextBox.value;
+    chatTextBox.value = "";
+    const messageJSON = {"message": message};
+    const request = new XMLHttpRequest();
+    request.open("POST", "/chatroom-message");
+    request.send(JSON.stringify(messageJSON));
+}
