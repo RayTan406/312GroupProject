@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Chatroom</title>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='chatstyle.css')}}"/>
+</head>
+<body>
+    <div class="chat">
+
+        <div id="chat-messages">
+        </div>
+
+        <div class="chat-form">
+            <div class="input">
+                <input type="text" placeholder="Type here!">
+                <button id="chat-button" onclick="sendChat()">Send</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class = "movethisbutton">
+        <button id="leave" onclick="leaveRoom()">Go Back</button>
+    </div>
+
+
+    
+</body>
+</html>
