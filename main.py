@@ -123,7 +123,7 @@ def chatroom_post():
     IDCol.update_one({"_id": get_id["_id"]}, {"$set": {"unique_id": uid}})
 
     #check if user authenticated
-    found_user = ""
+    found_user = "Guest"
     auth_token = request.cookies.get("authToken")
     if auth_token:
         auth = hashlib.sha256(auth_token.encode()).hexdigest()
@@ -133,6 +133,8 @@ def chatroom_post():
 
     message_json = json.loads(request.body)
     sent_message = html.escape(message_json["message"])
+    MessagesCol.insert_one({"username": found_user, "message": sent_message, "id": uid})
+
     
 
 
