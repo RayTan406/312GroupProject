@@ -133,9 +133,11 @@ def chatroom_post():
         if token and token["expire"] > datetime.now():
             found_user = token["username"]
 
-    message_json = json.loads(request.body)
+    message_json = json.loads(request.data)
     sent_message = html.escape(message_json["message"])
     MessagesCol.insert_one({"username": found_user, "message": sent_message, "id": uid})
+    response = make_response('', 204)
+    return response
 
     
 
