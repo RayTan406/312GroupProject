@@ -2,8 +2,9 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>Chatroom</title>
+    <title>Clueless Chatroom</title>
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='chatstyle.css')}}"/>
+    <script src="{{ url_for('static', filename='functions.js') }}"></script>
 </head>
 <body>
     <div class="chat">
@@ -13,7 +14,9 @@
 
         <div class="chat-form">
             <div class="input">
-                <input type="text" placeholder="Type here!">
+                <label>
+                    <input id= "textbox" type="text" placeholder="Type here!">
+                </label>
                 <button id="chat-button" onclick="sendChat()">Send</button>
             </div>
         </div>
@@ -21,7 +24,7 @@
     </div>
 
     <div class = "movethisbutton">
-        <button id="leave" onclick="leaveRoom()">Go Back</button>
+        <button id="leave" onclick="chatRoomLeave()">Go Back</button>
     </div>
 
 

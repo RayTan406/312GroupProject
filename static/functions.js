@@ -17,11 +17,22 @@ function toggleForms() {
 }
 
 function sendChat(){
-    const chatTextBox = document.getElementById("chat-form");
+    const chatTextBox = document.getElementById("textbox");
     const message = chatTextBox.value;
     chatTextBox.value = "";
     const messageJSON = {"message": message};
     const request = new XMLHttpRequest();
     request.open("POST", "/chatroom-message");
     request.send(JSON.stringify(messageJSON));
+}
+
+function chatRoomDirect(){
+    // const request = new XMLHttpRequest();
+    // request.open("GET", "/chatroom");
+    // request.send();
+    window.location.href = "/chatroom";
+}
+
+function chatRoomLeave(){
+    window.location.href = "/";
 }

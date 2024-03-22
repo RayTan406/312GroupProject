@@ -6,6 +6,7 @@ import html
 import hashlib
 import os
 import bcrypt
+import json
 
 client = pymongo.MongoClient("mongo")
 db = client["CLUELESS"]
@@ -104,7 +105,8 @@ def logout():
 
 @app.route("/chatroom", methods=["GET"])
 def chatroom():
-    return render_template("chatroom.html")
+    print("redirect to chatroom")
+    return render_template("chat.html")
 
 @app.route("/chatroom-message", methods=["POST"])
 def chatroom_post():

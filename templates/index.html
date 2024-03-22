@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Page Title</title>
+    <title>Clueless Website</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
     <style>
@@ -21,6 +21,8 @@
 
 <button type="button" id="background_buttonred">Change background to red</button>
 <button type="button" id="background_buttonblue">Change background to blue</button>
+<button type="button" id="chatroom-enter" onclick="chatRoomDirect()">Go to chatroom!</button>
+
 
 {% if loggedin %}
 <div id="logged-in" class="logged_in_stuff">
