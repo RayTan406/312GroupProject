@@ -20,3 +20,11 @@ body {
     bottom: 5px;
     left: 5px;
 }
+.chat-message {
+    display: flex;
+    align-items: center;
+}
+.chat-message p {
+    flex: 1;
+    margin-right: 10px;
+}
