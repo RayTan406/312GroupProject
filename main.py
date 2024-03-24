@@ -106,7 +106,19 @@ def logout():
 @app.route("/chatroom", methods=["GET"])
 def chatroom():
     print("redirect to chatroom")
-    return render_template("chat.html")
+    user_name_here = ""
+    loggedin = False
+    auth_token = request.cookies.get("authToken")
+    TokensCol = db["Tokens"]
+    if auth_token:
+        auth = hashlib.sha256(auth_token.encode()).hexdigest()
+        token = TokensCol.find_one({"authToken": auth})
+        if token and token["expire"] > datetime.now():
+            loggedin = True
+            user_name_here = token["username"]
+    MessagesCol = db["Messages"]
+    messages = list(MessagesCol.find({}))
+    return render_template("chat.html", messages = messages, authenticated = loggedin, username = user_name_here)
 
 @app.route("/chatroom-message", methods=["POST"])
 def chatroom_post():
@@ -135,12 +147,17 @@ def chatroom_post():
 
     message_json = json.loads(request.data)
     sent_message = html.escape(message_json["message"])
-    MessagesCol.insert_one({"username": found_user, "message": sent_message, "id": uid})
-    response = make_response('', 204)
-    return response
+    MessagesCol.insert_one({"username": found_user, "message": sent_message, "id": uid, "likes": 0, "likers": []})
+    return redirect(url_for("chatroom"))
 
     
+@app.route("/like/<id>")
+def like(id):
+    pass
 
+@app.route("/unlike/<id>")
+def unlike(id):
+    pass
 
             
 

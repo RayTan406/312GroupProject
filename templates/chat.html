@@ -5,17 +5,39 @@
     <title>Clueless Chatroom</title>
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='chatstyle.css')}}"/>
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
+    <style>
+        .chat-message {
+            display: flex;
+            align-items: center;
+        }
+        .chat-message p {
+            flex: 1;
+            margin-right: 10px; /* Add space between message text and button */
+        }
+    </style>
 </head>
 <body>
     <div class="chat">
-
         <div id="chat-messages">
+            {% for message in messages %}
+            <div class="chat-message">
+                <p>{{ message.message }}</p>
+                {% if authenticated %}
+                    {% if username in message.likers %}
+                        <a href="{{ url_for('unlike', id=message.id) }}">Unlike</a>
+                    {% else %}
+                        <a href="{{ url_for('like', id=message.id) }}">Like</a>
+                    {% endif %}
+                    Likes: {{ message.likes }}
+                {% endif %}
+            </div>
+            {% endfor %}
         </div>
 
         <div class="chat-form">
             <div class="input">
                 <label>
-                    <input id= "textbox" type="text" placeholder="Type here!">
+                    <input id="textbox" type="text" placeholder="Type here!">
                 </label>
                 <button id="chat-button" onclick="sendChat()">Send</button>
             </div>
@@ -23,11 +45,11 @@
 
     </div>
 
-    <div class = "movethisbutton">
+    <div class="movethisbutton">
         <button id="leave" onclick="chatRoomLeave()">Go Back</button>
     </div>
 
-
-    
+    <script>
+    </script>
 </body>
 </html>
