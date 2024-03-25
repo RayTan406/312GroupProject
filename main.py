@@ -99,6 +99,13 @@ def login():
 
 @app.route("/logout", methods=["POST"])
 def logout():
+    TokensCol = db["Tokens"]
+    auth_token = request.cookies.get("authToken")
+    if auth_token:
+        auth = hashlib.sha256(auth_token.encode()).hexdigest()
+        token = TokensCol.find_one({"authToken": auth})
+        if token and token["expire"] > datetime.now():
+            TokensCol.update_one({"authToken": auth}, {"$set": {"expire": datetime.fromtimestamp(0)}})
     response = make_response(redirect(url_for("root")))
     response.delete_cookie("authToken")
     return response
@@ -168,6 +175,8 @@ def like(id):
         if user_name_here not in likers:
             likers.append(user_name_here)
             messageCol.update_one({"id": id}, {"$set": {"likes": updateLikes, "likers": likers}})
+    else:
+        return "This page is not found.", 404
     return redirect(url_for("chatroom"))
 
 @app.route("/unlike/<int:id>")
@@ -188,6 +197,8 @@ def unlike(id):
         if user_name_here in likers:
             likers.remove(user_name_here)
             messageCol.update_one({"id": id}, {"$set": {"likes": updateLikes, "likers": likers}})
+    else:
+        return "This page is not found.", 404
     return redirect(url_for("chatroom"))
             
 
