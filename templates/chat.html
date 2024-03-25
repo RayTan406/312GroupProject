@@ -13,7 +13,7 @@
         <div id="chat-messages">
             {% for message in messages %}
             <div class="chat-message">
-                <p>{{ message.username }}: {{ message.message }}</p>
+                <p>{{ message.username | safe }}: {{ message.message | safe }}</p>
                 {% if authenticated %}
                     {% if username in message.likers %}
                         <a href="/unlike/{{ message.id }}">Unlike</a>

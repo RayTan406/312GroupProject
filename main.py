@@ -58,7 +58,7 @@ def register():
             if repeatPassword == password:
                 if validate_password(password):
                     salt = bcrypt.gensalt()
-                    hashed_password = bcrypt.hashpw(password.encode(), salt)
+                    hashed_password = hashlib.sha256(password.encode() + salt).hexdigest()
                     user_info = {
                         "username": username,
                         "password": hashed_password,
@@ -82,7 +82,9 @@ def login():
         account = AccountCol.find_one({"username": username})
         if account:
             hashed_password = account["password"]
-            if bcrypt.checkpw(password.encode(), hashed_password):
+            salt = account["salt"]
+            check = hashlib.sha256(password.encode() + salt).hexdigest()
+            if check == hashed_password:
                 auth_token = bcrypt.gensalt().decode()
                 hashed = hashlib.sha256(auth_token.encode()).hexdigest()
                 expire = datetime.now() + timedelta(minutes=60)
