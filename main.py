@@ -145,20 +145,50 @@ def chatroom_post():
         if token and token["expire"] > datetime.now():
             found_user = token["username"]
 
-    message_json = json.loads(request.data)
-    sent_message = html.escape(message_json["message"])
+    sent_message = html.escape(request.form.get("chat"))
     MessagesCol.insert_one({"username": found_user, "message": sent_message, "id": uid, "likes": 0, "likers": []})
     return redirect(url_for("chatroom"))
 
     
-@app.route("/like/<id>")
+@app.route("/like/<int:id>")
 def like(id):
-    pass
+    user_name_here = ""
+    auth_token = request.cookies.get("authToken")
+    TokensCol = db["Tokens"]
+    if auth_token:
+        auth = hashlib.sha256(auth_token.encode()).hexdigest()
+        token = TokensCol.find_one({"authToken": auth})
+        if token and token["expire"] > datetime.now():
+            user_name_here = token["username"]
+    messageCol = db["Messages"]
+    message = messageCol.find_one({"id": id})
+    if message:
+        updateLikes = int(message["likes"]) + 1
+        likers = message["likers"]
+        if user_name_here not in likers:
+            likers.append(user_name_here)
+            messageCol.update_one({"id": id}, {"$set": {"likes": updateLikes, "likers": likers}})
+    return redirect(url_for("chatroom"))
 
-@app.route("/unlike/<id>")
+@app.route("/unlike/<int:id>")
 def unlike(id):
-    pass
-
+    user_name_here = ""
+    auth_token = request.cookies.get("authToken")
+    TokensCol = db["Tokens"]
+    if auth_token:
+        auth = hashlib.sha256(auth_token.encode()).hexdigest()
+        token = TokensCol.find_one({"authToken": auth})
+        if token and token["expire"] > datetime.now():
+            user_name_here = token["username"]
+    messageCol = db["Messages"]
+    message = messageCol.find_one({"id": id})
+    if message:
+        updateLikes = int(message["likes"]) - 1
+        likers = message["likers"]
+        if user_name_here in likers:
+            likers.remove(user_name_here)
+            messageCol.update_one({"id": id}, {"$set": {"likes": updateLikes, "likers": likers}})
+    return redirect(url_for("chatroom"))
             
 
 

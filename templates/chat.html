@@ -13,28 +13,28 @@
         <div id="chat-messages">
             {% for message in messages %}
             <div class="chat-message">
-                <p>{{ message.message }}</p>
+                <p>{{ message.username }}: {{ message.message }}</p>
                 {% if authenticated %}
                     {% if username in message.likers %}
-                        <a href="{{ url_for('unlike', id=message.id) }}">Unlike</a>
+                        <a href="/unlike/{{ message.id }}">Unlike</a>
                     {% else %}
-                        <a href="{{ url_for('like', id=message.id) }}">Like</a>
+                        <a href="/like/{{ message.id }}">Like</a>
                     {% endif %}
-                    Likes: {{ message.likes }}
+                    -Likes: {{ message.likes }}
                 {% endif %}
             </div>
             {% endfor %}
         </div>
-
-        <div class="chat-form">
-            <div class="input">
-                <label>
-                    <input id="textbox" type="text" placeholder="Type here!">
-                </label>
-                <button id="chat-button" onclick="sendChat()">Send</button>
+        <form action="/chatroom-message" method="post">
+            <div class="chat-form">
+                <div class="input">
+                    <label>
+                        <input name = "chat" id="textbox" type="text" placeholder="Type here!">
+                    </label>
+                    <button id="chat-button" type="submit">Send</button>
+                </div>
             </div>
-        </div>
-
+        </form>
     </div>
 
     <div class="movethisbutton">
